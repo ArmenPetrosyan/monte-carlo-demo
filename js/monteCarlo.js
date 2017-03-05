@@ -32,29 +32,29 @@
 
     // декартовы координаты пунктов назначения
     destinations = [
-      {n:1,x:step*(points/2)+offset - (width/2), y:width+offset - (width/2),count:0},
-      {n:2,x:width+offset - (width/2), y:step*(points/2)+offset - (width/2),count:0},
-      {n:3,x:offset - (width/2), y:step*(points/2)+offset- (width/2),count:0},
-      {n:4,x:step*(points/2)+offset - (width/2), y:offset - (width/2),count:0},
-      {n:5,x:width+offset - (width/2), y:offset - (width/2),count:0},
-      {n:6,x:offset - width/2, y:(width+offset) - width/2,count:0},
-      {n:7,x:(width+offset) - width/2, y:(width+offset) - width/2,count:0},
-      {n:8,x:offset - width/2, y:offset - width/2,count:0}
+      {n:1,x:0, y: width/2, count:0},
+      {n:2,x:width/2, y:0, count:0},
+      {n:3,x:-(width/2), y:0,count:0},
+      {n:4,x:0, y:-(width/2),count:0},
+      {n:5,x:width/2, y:-width/2,count:0},
+      {n:6,x:-width/2, y:width/2,count:0},
+      {n:7,x:width/2, y:width/2,count:0},
+      {n:8,x:-width/2, y:-width/2,count:0}
     ];
 
     // точки назначения
     var pRad = 3;
-    var p1 = board.circle(step*(points/2)+offset, width+offset, pRad);
-    var p2 = board.circle(width+offset, step*(points/2)+offset, pRad);
-    var p3 = board.circle(offset, step*(points/2)+offset, pRad);
-    var p4 = board.circle(step*(points/2)+offset, offset, pRad);
-    var p5 = board.circle(width+offset, offset, pRad);
-    var p6 = board.circle(offset, width+offset, pRad);
-    var p7 = board.circle(width+offset, width+offset, pRad);
-    var p8 = board.circle(offset, offset, pRad);
+    var p1 = board.circle(width/2, width, pRad).attr({fill:"green"});
+    var p2 = board.circle(width, width/2, pRad);
+    var p3 = board.circle(0, width/2, pRad);
+    var p4 = board.circle(width/2, 0, pRad);
+    var p5 = board.circle(width, 0, pRad);
+    var p6 = board.circle(0, width, pRad);
+    var p7 = board.circle(width, width, pRad);
+    var p8 = board.circle(0, 0, pRad);
 
     var set = new Snap.Set([p1,p2,p3,p4,p5,p6,p7,p8]);
-    set.attr({'fill':'#15354f'});
+    // set.attr({'fill':'#15354f'});
     set.animate({r:15},3000, mina.elastic);
 
 
