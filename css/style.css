@@ -20,6 +20,14 @@ body {
   margin-left: 10px;
   background: #95d68d;
 }
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+  }
+  .header .authors {
+    align-self: flex-start;
+  }
+}
 .heading__ghost {
   position: absolute;
   left: 10px;

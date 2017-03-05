@@ -1,34 +1,62 @@
-(function(){
-  var step = 40;
-  var destinations = [];
-  var points = 10;
-  var width = step * points;
-  var board = Snap("#board");
 
+function Destination(x, y) {
+  this.x = x;
+  this.y = y;
+  this.collected = 0;
+}
 
-  function drawBoard(board, size){
-    points = size || points;
-    width = step * points;
-    var offset = 0;
+/**
+ * Отрисовка и анимация, работа с SVG
+ * @param step Number
+ * @param size Number
+ * @param board Snap
+ * @constructor
+ */
+function VectorField(step, size, board) {
+  this.step = step || 50;
+  this.size = size || 10;
+  this.destinations = [];
+  this.board = board;
+}
 
-    var field = board.rect(0, 0, width, width).drag();
-    field.attr('fill','#fff')
+VectorField.prototype.setDestinations = function () {
+  this.destinations = [
+    new Destination(-this.size/2, this.size/2), // (-1,1)
+    new Destination(this.size/2, this.size/2), // (0,0)
+  ]
+};
 
-    var counter = offset;
+VectorField.prototype.drawDestinations = function (destCount /* Number */) {
 
-    while(counter <= width+offset) {
-      x = board.rect(offset, counter, width, 1);
-      y = board.rect(counter, offset, 1, width);
-      x.attr('fill','#eaf2f7');
-      y.attr('fill','#eaf2f7');
-      counter += step;
-    }
+};
 
-    // оси
-    var X = board.line(offset, step*(points/2)+offset, width+offset, step*(points/2)+offset);
-    var Y = board.line(step*(points/2)+offset, offset, step*(points/2)+offset, width+offset);
-    var axis = new Snap.Set([X,Y]);
-    axis.attr({'stroke':'#576d7f','stroke-width':1});
+/**
+ *  Начальная отрисовка
+ */
+VectorField.prototype.draw = function () {
+  var parts = this.size ;
+  var board = this.board ;
+  var step = this.step;
+  var width = this.step * parts;
+
+  var field = board.rect(0, 0, width, width).drag();
+  field.attr('fill','#fff')
+
+  var counter = 0;
+
+  while(counter <= width+offset) {
+    x = board.rect(offset, counter, width, 1);
+    y = board.rect(counter, offset, 1, width);
+    x.attr('fill','#eaf2f7');
+    y.attr('fill','#eaf2f7');
+    counter += step;
+  }
+
+  // оси
+  // var X = board.line(offset, step*(points/2)+offset, width+offset, step*(points/2)+offset);
+  // var Y = board.line(step*(points/2)+offset, offset, step*(points/2)+offset, width+offset);
+  // var axis = new Snap.Set([X,Y]);
+  // axis.attr({'stroke':'#576d7f','stroke-width':1});
 
     // декартовы координаты пунктов назначения
     destinations = [
@@ -57,26 +85,31 @@
     // set.attr({'fill':'#15354f'});
     set.animate({r:15},3000, mina.elastic);
 
+/**
+ *  Расчеты и посторение пути
+ * @param dotCount
+ * @constructor
+ */
+function MonteCarlo(dotCount){
+  this.dotCount = dotCount;
+}
 
-    var p1 = drawLine(
-      [ step*(points/2)+offset, step*(points/2)+offset,
-        step*(points/2)+offset + step, step*(points/2)+offset,
-        step*(points/2)+offset + step, step*(points/2-1)+offset
-      ]);
-    // var p2 = board.line(step*(points/2)+offset, step*(points/2)+offset,step*(points/2)+offset, step*(points/2)+offset);
-    // var lines = new Snap.Set([p1,p2])
-    // lines.attr({'stroke-width':2})
-    // p1.attr('stroke','blue').animate({x2:step*(points/2)+offset + step*3, y2:step*(points/2)+offset}, 2000, mina.bounce);
-    // p2.attr('stroke','black').animate({x2:step*3, y2:step*(points/2)+offset}, 2000, mina.bounce)
 
-    function drawLine(points){
-      var c = board.line();
-      c.attr({'fill':'red'})
-        .animate({x:points[4],y:points[5]}, 500, mina.easeinout);
+MonteCarlo.prototype.getProbability = function (destination /* Destination */) {
 
-      return c;
-    }
-  }
+};
+
+
+/**
+ *  Точка входа в приложение
+ */
+(function(){
+  var step = 50;
+  var destinations = [];
+  var points = 10;
+  var width = step * points;
+  var board = Snap("#board");
+  var field = new VectorField(step, points, board);
 
 
   function start(){
@@ -196,13 +229,13 @@
           cy:path[counter+1]+width/2,
           x:path[counter]+width/2,
           y:path[counter+1]+width/2,
-        },200,mina.elastic, function(){
+        },100,mina.backin, function(){
           if(counter < path.length-3) {
             counter += 2;
             animatePath(ball, path, counter);
           } else {
-            ball.animate({r:25},200, mina.easeinout, function () {
-              ball.animate({r:15},200, mina.easeout, function () {
+            ball.animate({r:25},100, mina.easeinout, function () {
+              ball.animate({r:15},100, mina.easeout, function () {
                 ball.remove();
               })
             })
@@ -222,6 +255,6 @@
       window.dest = destinations;
   }
 
-  drawBoard(board,10);
-  start();
+  field.draw();
+  field.start();
 })();
