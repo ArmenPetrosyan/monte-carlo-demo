@@ -30,6 +30,7 @@
     var axis = new Snap.Set([X,Y]);
     axis.attr({'stroke':'#576d7f','stroke-width':1});
 
+    // декартовы координаты пунктов назначения
     destinations = [
       {n:1,x:step*(points/2)+offset - (width/2), y:width+offset - (width/2),count:0},
       {n:2,x:width+offset - (width/2), y:step*(points/2)+offset - (width/2),count:0},
@@ -55,11 +56,7 @@
     var set = new Snap.Set([p1,p2,p3,p4,p5,p6,p7,p8]);
     set.attr({'fill':'#15354f'});
     set.animate({r:15},3000, mina.elastic);
-    var t = board.text(0,0,'3').attr('fill','red');
-    var qq = board.g(p8,t);
-    // console.log(t)
 
-    // var groupDest = board.g(set);
 
     var p1 = drawLine(
       [ step*(points/2)+offset, step*(points/2)+offset,
@@ -163,7 +160,7 @@
         }
       };
 
-      var dotsCount = 100;
+      var dotsCount = 20;
       var finished = [];
       var stack = [];
 
@@ -195,15 +192,37 @@
 
 
       var path = finished[0].getPath();
-      var d = "m"+width/2+" "+width/2+"L";
-      path.slice(2).forEach(function(coord) {
-        d += (coord+width/2)+","
-      });
-      var p = board.path(d);
-      p.attr({
-        stroke: 'red',
-        strokeWidth: '2',
-        fill: "none"
+      var d = "M"+width/2+" "+width/2;
+      // var p = board.path(d);
+
+      function animatePath(ball, path, counter) {
+        // console.log(path.length, counter);
+        ball.animate({
+          cx:path[counter]+width/2,
+          cy:path[counter+1]+width/2,
+          x:path[counter]+width/2,
+          y:path[counter+1]+width/2,
+        },200,mina.elastic, function(){
+          if(counter < path.length-3) {
+            // console.log(ball.attr('cx'),ball.attr('cx'))
+            counter += 2;
+            animatePath(ball, path, counter);
+          } else {
+            console.log(ball.attr('cx'),ball.attr('cx'))
+            ball.animate({r:25},200, mina.easeinout, function () {
+              ball.animate({r:15},200, mina.easeout, function () {
+                ball.remove();
+              })
+            })
+          }
+        });
+      }
+
+      finished.forEach(function (dot) {
+        var ball = board.circle(width/2,width/2,3).attr({fill:'red'});
+        var counter = 2;
+        var path = dot.getPath();
+        animatePath(ball,path,counter);
       });
 
       window.stack = stack;
