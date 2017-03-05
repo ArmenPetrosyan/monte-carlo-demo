@@ -190,13 +190,7 @@
         })
       }
 
-
-      var path = finished[0].getPath();
-      var d = "M"+width/2+" "+width/2;
-      // var p = board.path(d);
-
       function animatePath(ball, path, counter) {
-        // console.log(path.length, counter);
         ball.animate({
           cx:path[counter]+width/2,
           cy:path[counter+1]+width/2,
@@ -204,11 +198,9 @@
           y:path[counter+1]+width/2,
         },200,mina.elastic, function(){
           if(counter < path.length-3) {
-            // console.log(ball.attr('cx'),ball.attr('cx'))
             counter += 2;
             animatePath(ball, path, counter);
           } else {
-            console.log(ball.attr('cx'),ball.attr('cx'))
             ball.animate({r:25},200, mina.easeinout, function () {
               ball.animate({r:15},200, mina.easeout, function () {
                 ball.remove();
