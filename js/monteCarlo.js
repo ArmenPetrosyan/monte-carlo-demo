@@ -122,6 +122,7 @@ VectorField.prototype.drawPathes = function (finishedDots) {
   var board = this.board;
   var de = this.destinations;
   var texts = board.selectAll('.text');
+  var probabilityNode = document.querySelector('.probability_value');
 
   function animatePath(ball, path, counter, dest) {
     ball.animate({
@@ -143,6 +144,17 @@ VectorField.prototype.drawPathes = function (finishedDots) {
             de[i].animated += 1;
             var probability = (de[i].animated/finishedDots.length).toFixed(2);
             texts[i].attr({text:probability})
+
+
+            // Средняя угловая вероятность
+            var P =
+              ( de[0].animated/finishedDots.length +
+                de[2].animated/finishedDots.length +
+                de[4].animated/finishedDots.length +
+                de[6].animated/finishedDots.length
+              )/4
+
+            probabilityNode.innerHTML = P.toFixed(2);
           })
         })
       }
@@ -153,7 +165,6 @@ VectorField.prototype.drawPathes = function (finishedDots) {
     var ball = this.board.circle(width/2,width/2,3).attr({fill:'red'});
     var counter = 2;
     var path = dot.getPath();
-    // console.log(dot.getDest())
     animatePath(ball,path,counter, dot.getDest());
   }.bind(this));
 };
@@ -276,13 +287,13 @@ Point.prototype.randomStep = function(){
   }
 
   function freeMove(luckyNum) {
-    if(luckyNum == 2) {
+    if(luckyNum < 2) {
       this.stepUp();
-    } else if(luckyNum == 4) {
+    } else if(luckyNum < 4) {
       this.stepDown();
-    } else if(luckyNum == 6) {
+    } else if(luckyNum < 6) {
       this.stepLeft();
-    } else if(luckyNum == 8) {
+    } else if(luckyNum < 8) {
       this.stepRight();
     }
   }

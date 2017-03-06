@@ -16,7 +16,7 @@
         <span class="heading__ghost">Метод Монте-Карло</span>
     </h1>
     <span class="authors">
-        Авторы: Петросян/Ясенко <span class="badge">501М</span>
+        Автор: Петросян Армен <span class="badge">501М</span>
     </span>
 </header>
 <div class="container-fluid">
@@ -25,27 +25,44 @@
     </div>
     <div class="col-sm-6">
         <div id="form">
-            <div class="controls">
-                <label for="dots">
-                    Количество точек
-                </label>
-                <input type="number" class="control" name="dots" id="dots" value="100" max="120">
+            <div class="probability">
+                <!--<span class="probability_header">-->
+                    <!--Probability-->
+                <!--</span>-->
+                <!--<span class="probability_value">-->
+                    <!--0-->
+                <!--</span>-->
+                <div class="panel panel-info">
+                    <div class="panel-heading">Cредняя вероятность угловых узлов</div>
+                    <div class="panel-body probability_value">
+                        0
+                    </div>
+                </div>
             </div>
-            <div class="controls">
-                <label for="cellNum">
-                    Количество ячеек
-                </label>
-                <input type="number" class="control" name="cellNum" id="cellNum" value="10" max="20">
+            <div>
+                <div class="controls">
+                    <label for="dots">
+                        Количество точек
+                    </label>
+                    <input type="number" class="control" name="dots" id="dots" value="100" max="120">
+                </div>
+                <div class="controls">
+                    <label for="cellNum">
+                        Количество ячеек
+                    </label>
+                    <input type="number" class="control" name="cellNum" id="cellNum" value="10" max="20">
+                </div>
+                <div class="controls hidden">
+                    <label for="cellSize">
+                        Размер ячеек
+                    </label>
+                    <input type="number" class="control" name="cellSize" id="cellSize" value="50" max="70">
+                </div>
+                <div class="controls">
+                    <button id="startButton" class="btn btn-success">Запустить</button>
+                </div>
             </div>
-            <div class="controls hidden">
-                <label for="cellSize">
-                    Размер ячеек
-                </label>
-                <input type="number" class="control" name="cellSize" id="cellSize" value="50" max="70">
-            </div>
-            <div class="controls">
-                <button id="startButton" class="btn btn-success">Запустить</button>
-            </div>
+
         </div>
     </div>
 </div>

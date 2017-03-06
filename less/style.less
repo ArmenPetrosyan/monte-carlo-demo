@@ -53,6 +53,23 @@ body {
   font-size: 18px;
   position: absolute;
   right: 20px;
+  display: flex;
+  align-items: center;
+
+  .probability {
+    margin-right: 100px;
+
+    .panel {
+      box-shadow: 0 0 100px 10px #ccc;
+    }
+
+    &_value {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f7bd6;
+    }
+  }
 
   .controls {
     padding: 20px 0;
