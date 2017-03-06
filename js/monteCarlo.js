@@ -4,10 +4,12 @@
  * @param y
  * @constructor
  */
-function Destination(x, y) {
+function Destination(n, x, y) {
+  this.n = n;
   this.x = x;
   this.y = y;
   this.collected = 0;
+  this.animated = 0;
 }
 
 Destination.prototype.getTransformedCoords = function (size) {
@@ -44,14 +46,14 @@ VectorField.prototype.init = function (step, size) {
   this.width = this.step * this.size;
 
   this.destinations = [
-    new Destination(-this.width/2, this.width/2),   // (-1,1)
-    new Destination(0, this.width/2),               // (0,1)
-    new Destination(this.width/2, this.width/2),    // (1,1)
-    new Destination(this.width/2, 0),               // (1,0)
-    new Destination(this.width/2, -this.width/2),   // (1,-1)
-    new Destination(0, -this.width/2),              // (0,-1)
-    new Destination(-this.width/2, -this.width/2),  // (-1,-1)
-    new Destination(-this.width/2, 0),              // (-1,0)
+    new Destination(0, -this.width/2, this.width/2),  // (-1,1)
+    new Destination(1,0, this.width/2),               // (0,1)
+    new Destination(2,this.width/2, this.width/2),    // (1,1)
+    new Destination(3,this.width/2, 0),               // (1,0)
+    new Destination(4,this.width/2, -this.width/2),   // (1,-1)
+    new Destination(5,0, -this.width/2),              // (0,-1)
+    new Destination(6,-this.width/2, -this.width/2),  // (-1,-1)
+    new Destination(7,-this.width/2, 0),              // (-1,0)
   ]
 };
 
@@ -65,16 +67,20 @@ VectorField.prototype.drawDestinations = function (rad) {
   this.destinations.forEach(function (destination) {
     var coords = destination.getTransformedCoords(this.width);
     var dest = this.board.circle(coords.x, coords.y, rad);
-    var text = this.board.text(coords.x-6, coords.y + 5, "0").attr({
+    var text = this.board.text(coords.x, coords.y+5, "0").attr({
       fill:'#fff',
       class:'text',
-      "font-size": 10
+      "font-size": 12,
+      style:"text-anchor: middle"
     });
     var group = this.board.g(dest,text);
+    group.attr({
+      class:"text-group",
+      width: 15,
+      height: 15
+    })
     set.push(group)
   }.bind(this))
-  // set.animate({r : 15}, 3000, mina.elastic);
-  this.drawnDest = set;
 };
 
 /**
@@ -114,8 +120,10 @@ VectorField.prototype.draw = function () {
 VectorField.prototype.drawPathes = function (finishedDots) {
   var width = this.width;
   var board = this.board;
+  var de = this.destinations;
+  var texts = board.selectAll('.text');
 
-  function animatePath(ball, path, counter) {
+  function animatePath(ball, path, counter, dest) {
     ball.animate({
       cx:path[counter]+width/2,
       cy:path[counter+1]+width/2,
@@ -124,11 +132,17 @@ VectorField.prototype.drawPathes = function (finishedDots) {
     },100,mina.backin, function(){
       if(counter < path.length-3) {
         counter += 2;
-        animatePath(ball, path, counter);
+        animatePath(ball, path, counter, dest);
       } else {
         ball.animate({r:25},100, mina.easeinout, function () {
           ball.animate({r:15},100, mina.easeout, function () {
             ball.remove();
+
+            // выводим вероятность
+            var i = dest.n;
+            de[i].animated += 1;
+            var probability = (de[i].animated/finishedDots.length).toFixed(2);
+            texts[i].attr({text:probability})
           })
         })
       }
@@ -139,7 +153,8 @@ VectorField.prototype.drawPathes = function (finishedDots) {
     var ball = this.board.circle(width/2,width/2,3).attr({fill:'red'});
     var counter = 2;
     var path = dot.getPath();
-    animatePath(ball,path,counter);
+    // console.log(dot.getDest())
+    animatePath(ball,path,counter, dot.getDest());
   }.bind(this));
 };
 
@@ -176,6 +191,7 @@ MonteCarlo.prototype.calculate = function (destinations, step) {
 
       destinations.forEach(function (dest) {
         if(curPos.x == dest.x && curPos.y == dest.y) {
+          point.setDest(dest);
           this.finishedDots.push(point);
           dest.collectOne();
           delete arr[index];
@@ -206,6 +222,14 @@ var Point = function(posX, posY, step){
   this._step = step;
   this._path = [this._x, this._y];
   this.onEdge = null;
+};
+
+Point.prototype.setDest = function (dest) {
+  this.destination = dest;
+};
+
+Point.prototype.getDest = function () {
+  return this.destination;
 };
 
 Point.prototype.stepUp = function(){
@@ -299,7 +323,6 @@ Point.prototype.randomStep = function(){
     var step = parseInt(document.querySelector("#cellSize").value);
     var dotCount = parseInt(document.querySelector("#dots").value);
     
-    console.log(points, step, dotCount);
 
     field.destroy();
     field.init(step, points);
@@ -309,12 +332,6 @@ Point.prototype.randomStep = function(){
     var dots = monte.calculate(field.getDestinations(), field.step);
     field.drawPathes(dots);
 
-    // выводим вероятность
-    var texts = board.selectAll('.text');
-    field.destinations.forEach(function (dest,i) {
-      var collected = dest.getProbability(dotCount);
-      texts[i].attr({text:collected})
-    })
   });
 
 })();
