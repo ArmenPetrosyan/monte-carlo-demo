@@ -47,11 +47,38 @@ body {
 }
 #form .probability {
   margin-right: 100px;
+  max-width: 300px;
+  background: #eaf9fb;
 }
 #form .probability .panel {
   box-shadow: 0 0 100px 10px #ccc;
 }
 #form .probability_value {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f7bd6;
+}
+#form .probability .store {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#form .probability .store_value {
+  padding: 5px 10px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  background: #0f7bd6;
+}
+#form .probability .store_value:last-of-type {
+  border-right: none;
+}
+#form .probability .final-probability {
+  text-align: center;
+  margin-bottom: 0;
+}
+#form .probability .final-probability_value {
   text-align: center;
   font-size: 24px;
   font-weight: 700;

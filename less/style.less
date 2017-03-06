@@ -58,6 +58,8 @@ body {
 
   .probability {
     margin-right: 100px;
+    max-width: 300px;
+    background: #eaf9fb;
 
     .panel {
       box-shadow: 0 0 100px 10px #ccc;
@@ -68,6 +70,37 @@ body {
       font-size: 24px;
       font-weight: 700;
       color: #0f7bd6;
+    }
+
+    .store {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      &_value {
+        padding: 5px 10px;
+        margin-bottom: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
+        background: #0f7bd6;
+        //border-right: 1px solid #bfddff;
+
+        &:last-of-type {
+          border-right: none;
+        }
+      }
+    }
+
+    .final-probability {
+      text-align: center;
+      margin-bottom: 0;
+
+      &_value {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f7bd6;
+      }
     }
   }
 

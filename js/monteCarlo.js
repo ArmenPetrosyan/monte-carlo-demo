@@ -38,6 +38,7 @@ Destination.prototype.getProbability = function (all) {
  */
 function VectorField(board) {
   this.board = board;
+  this.P = [];
 }
 
 VectorField.prototype.init = function (step, size) {
@@ -45,7 +46,11 @@ VectorField.prototype.init = function (step, size) {
   this.size = size || 10;
   this.width = this.step * this.size;
 
-  this.destinations = [
+  this.destinations = this.createDest();
+};
+
+VectorField.prototype.createDest = function () {
+  return [
     new Destination(0, -this.width/2, this.width/2),  // (-1,1)
     new Destination(1,0, this.width/2),               // (0,1)
     new Destination(2,this.width/2, this.width/2),    // (1,1)
@@ -55,7 +60,7 @@ VectorField.prototype.init = function (step, size) {
     new Destination(6,-this.width/2, -this.width/2),  // (-1,-1)
     new Destination(7,-this.width/2, 0),              // (-1,0)
   ]
-};
+}
 
 VectorField.prototype.destroy = function () {
   if(this.board) this.board.clear();
@@ -152,7 +157,7 @@ VectorField.prototype.drawPathes = function (finishedDots) {
                 de[2].animated/finishedDots.length +
                 de[4].animated/finishedDots.length +
                 de[6].animated/finishedDots.length
-              )/4
+              )/4;
 
             probabilityNode.innerHTML = P.toFixed(2);
           })
@@ -180,12 +185,17 @@ VectorField.prototype.getDestinations = function () {
  * @param dotCount
  * @constructor
  */
-function MonteCarlo(dotCount){
-  this.dotCount = dotCount;
+function MonteCarlo(){
+  this.dotCount = 0;
   this.finishedDots = [];
   this.stack = [];
+  this.P = [];
 }
 
+MonteCarlo.prototype.setDotCount = function (dotCount) {
+  this.dotCount = dotCount;
+  this.finishedDots = [];
+};
 
 MonteCarlo.prototype.calculate = function (destinations, step) {
   // создаем 100 точек
@@ -215,7 +225,34 @@ MonteCarlo.prototype.calculate = function (destinations, step) {
     }.bind(this))
   }
 
+  // Средняя угловая вероятность
+  var P =
+    ( destinations[0].collected/this.finishedDots.length +
+      destinations[2].collected/this.finishedDots.length +
+      destinations[4].collected/this.finishedDots.length +
+      destinations[6].collected/this.finishedDots.length
+    )/4;
+
+  this.P.push(P.toFixed(2));
+  // console.log( destinations[0], this.finishedDots.length, this.dotCount)
+
   return this.finishedDots;
+};
+
+MonteCarlo.prototype.getLastProbability = function () {
+  return this.P[this.P.length-1];
+};
+
+MonteCarlo.prototype.getFinalProbability = function () {
+  var sumP = 0;
+
+  this.P.forEach(function (probability) {
+    sumP += parseFloat(probability);
+  });
+
+  // console.log(this.P);
+
+  return (sumP/this.P.length).toFixed(2);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -325,10 +362,14 @@ Point.prototype.randomStep = function(){
   var button = document.querySelector('#startButton');
   var board = Snap("#board");
   var field = new VectorField(board);
+  var monte = new MonteCarlo();
+
   field.init();
   field.draw();
 
   button.addEventListener("click", function(){
+    document.querySelector('.probability_value').innerHTML = 0;
+    field.board.selectAll("circle").forEach(function(elem){elem.stop();});
 
     var points = parseInt(document.querySelector("#cellNum").value);
     var step = parseInt(document.querySelector("#cellSize").value);
@@ -337,12 +378,20 @@ Point.prototype.randomStep = function(){
 
     field.destroy();
     field.init(step, points);
-    var monte = new MonteCarlo(dotCount);
+    monte.setDotCount(dotCount);
 
     field.draw();
     var dots = monte.calculate(field.getDestinations(), field.step);
     field.drawPathes(dots);
 
+    var store = document.querySelector('.store');
+    var storeValNode = document.createElement('span');
+    storeValNode.classList.add('store_value');
+    storeValNode.classList.add('badge');
+    storeValNode.innerHTML = monte.getLastProbability();
+    store.append(storeValNode);
+
+    document.querySelector('.final-probability_value').innerHTML =  monte.getFinalProbability();
   });
 
 })();
